@@ -98,9 +98,17 @@ p{margin:0 0 1em}
 .hero .lede{font-size:1.19rem;max-width:33em;color:#2b3d4d;margin-top:22px}
 .hero .acts{display:flex;flex-wrap:wrap;gap:14px;margin-top:32px}
 .shot{position:relative}
+.shot picture{display:block}
 .shot img{
-  width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:3px;
+  width:100%;
+  aspect-ratio:19 / 20;
+  object-fit:cover;
+  object-position:center 42%;
+  border-radius:3px;
   box-shadow:0 24px 48px -28px rgba(11,46,85,.55);
+}
+@media (max-width:1040px){
+  .shot img{aspect-ratio:16 / 9;object-position:center}
 }
 .shot .strip{position:absolute;left:-14px;top:26px;bottom:26px;width:14px;
   background-image:repeating-linear-gradient(180deg,var(--sky) 0 14px,transparent 14px 22px)}
@@ -232,8 +240,24 @@ section{padding:88px 0}
 .callout{background:var(--mist);border-left:5px solid var(--sky);padding:30px 30px 34px;border-radius:0 3px 3px 0}
 .callout h3{font-size:1.2rem;color:var(--navy);margin-bottom:12px}
 .callout p{font-size:15.5px;color:#41525f}
-.orgs{display:flex;flex-wrap:wrap;gap:10px;margin-top:34px}
-.orgs li{list-style:none;font-size:13.5px;font-weight:600;color:var(--navy);background:#fff;border:1px solid var(--line);padding:9px 14px;border-radius:3px}
+/* partner logo carousel */
+.partner-carousel{margin-top:18px;position:relative}
+.partner-carousel-shell{position:relative}
+.partner-carousel-viewport{overflow:hidden;padding:4px 1px 10px}
+.partner-logo-track{display:flex;gap:14px;transition:transform .55s cubic-bezier(.22,.7,.3,1);will-change:transform}
+.partner-logo-card{flex:0 0 calc((100% - 14px)/2);min-width:0;margin:0;background:#fff;border:1px solid var(--line);border-top:4px solid var(--green);border-radius:4px;overflow:hidden;box-shadow:0 10px 24px -22px rgba(11,46,85,.55)}
+.partner-logo-card .logo-box{height:142px;display:flex;align-items:center;justify-content:center;padding:18px;background:#fff}
+.partner-logo-card img{width:100%;height:100%;object-fit:contain;display:block}
+.partner-logo-card figcaption{min-height:72px;padding:13px 14px 15px;border-top:1px solid var(--line);font:600 13.5px/1.35 var(--display);color:var(--navy);display:flex;align-items:center}
+.partner-carousel-controls{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+.partner-carousel-btn{width:38px;height:38px;border:1px solid var(--line);border-radius:50%;background:#fff;color:var(--navy);font:700 20px/1 var(--sans);cursor:pointer;display:grid;place-items:center;transition:background .2s,color .2s,border-color .2s}
+.partner-carousel-btn:hover,.partner-carousel-btn:focus-visible{background:var(--navy);border-color:var(--navy);color:#fff}
+.partner-carousel-note{margin-top:8px;font-size:12.5px;color:var(--grey)}
+@media (max-width:680px){
+  .partner-logo-card{flex-basis:100%}
+  .partner-logo-card .logo-box{height:156px}
+  .partner-logo-card figcaption{min-height:64px}
+}
 
 /* involve */
 .involve{display:grid;grid-template-columns:1fr 1fr;gap:26px}
@@ -311,6 +335,7 @@ footer a:hover{color:#fff;text-decoration:underline}
   .hero .acts .btn{width:100%;text-align:center}
 }
 </style>
+<link rel="preload" as="image" href="civass-yaounde-2026.jpg" type="image/jpeg">
 </head>
 <body>
 <a class="skip" href="#main" data-en="Skip to content" data-fr="Aller au contenu">Skip to content</a>
@@ -365,7 +390,10 @@ footer a:hover{color:#fff;text-decoration:underline}
 
       <figure class="shot" style="margin:0">
         <div class="strip" aria-hidden="true"></div>
-        <img src="civass-yaounde-2026.jpg" alt="CIVASS volunteers during a community clean-up operation in Cameroon">
+        <img src="civass-yaounde-2026.jpg"
+             width="1280" height="713"
+             alt="CIVASS volunteers during a community clean-up operation in Yaoundé, Cameroon"
+             loading="eager" decoding="async" fetchpriority="high">
         <figcaption data-en="Volunteers during a community clean-up operation, 2025."
                     data-fr="Volontaires lors d'une opération de nettoyage communautaire, 2025.">
           Volunteers during a community clean-up operation, 2025.
@@ -695,13 +723,99 @@ footer a:hover{color:#fff;text-decoration:underline}
 
         <h3 style="font-size:1rem;color:var(--navy);margin:38px 0 0"
             data-en="Institutions we work with" data-fr="Institutions partenaires">Institutions we work with</h3>
-        <ul class="orgs">
-          <li>MINJEC</li><li>MINREX</li><li>MINHDU</li><li>CONEP</li><li>IRIC</li>
-          <li data-en="National Volunteering Programme" data-fr="Programme National de Volontariat">National Volunteering Programme</li>
-          <li>YONECA</li><li>Mboa Hub</li><li>PLAVOLCAM</li><li>U-Report by UNICEF</li>
-          <li>Greenpeace Volunteer Group Cameroon</li><li>Break Free From Plastic</li>
-          <li>Duke of Edinburgh's International Award</li><li>UPAC</li>
-        </ul>
+
+        <div class="partner-carousel" id="partnerLogoCarousel">
+          <div class="partner-carousel-shell">
+            <div class="partner-carousel-viewport" aria-label="Partner institutions and networks" data-en="Partner institutions and networks" data-fr="Institutions et réseaux partenaires">
+              <div class="partner-logo-track" id="partnerLogoTrack">
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/MINHDU-Cameroon-Logo.jpeg" alt="MINHDU Cameroon logo" loading="lazy" decoding="async"></div>
+                  <figcaption data-en="Ministry of Housing and Urban Development (MINHDU)" data-fr="Ministère de l’Habitat et du Développement Urbain (MINHDU)">Ministry of Housing and Urban Development (MINHDU)</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/Cameroon-National-Volunteering-Awards-2020-Trophy.jpeg" alt="Cameroon National Volunteering Awards 2020 trophy" loading="lazy" decoding="async"></div>
+                  <figcaption data-en="Cameroon National Volunteering Awards — 2020" data-fr="Prix nationaux du volontariat du Cameroun — 2020">Cameroon National Volunteering Awards — 2020</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/IVY26-International-Volunteer-Year-2026-Logo.jpeg" alt="International Volunteer Year 2026 logo" loading="lazy" decoding="async"></div>
+                  <figcaption data-en="International Volunteer Year 2026 (IVY 2026)" data-fr="Année internationale des volontaires 2026 (IVY 2026)">International Volunteer Year 2026 (IVY 2026)</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/NVP-PNV-National-Volunteering-Programme-Cameroon-Logo.jpeg" alt="National Volunteering Programme Cameroon logo" loading="lazy" decoding="async"></div>
+                  <figcaption data-en="National Volunteering Programme (NVP / PNV)" data-fr="Programme National de Volontariat (PNV)">National Volunteering Programme (NVP / PNV)</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/Main-dOr-du-Volontariat-5th-Edition-Trophy.jpeg" alt="Main d'Or du Volontariat 5th Edition trophy" loading="lazy" decoding="async"></div>
+                  <figcaption data-en="Main d’Or du Volontariat — 5th Edition" data-fr="Main d’Or du Volontariat — 5e édition">Main d’Or du Volontariat — 5th Edition</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/CIVASS-Best-Volunteering-Organisation-Award-Certificate.jpeg" alt="CIVASS Best Volunteering Organisation Award certificate" loading="lazy" decoding="async"></div>
+                  <figcaption data-en="CIVASS — Best Volunteering Organisation Award" data-fr="CIVASS — Prix de la meilleure organisation de volontariat">CIVASS — Best Volunteering Organisation Award</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/MINJEC-Cameroon-Logo.jpeg" alt="MINJEC Cameroon logo" loading="lazy" decoding="async"></div>
+                  <figcaption data-en="Ministry of Youth Affairs and Civic Education (MINJEC)" data-fr="Ministère de la Jeunesse et de l’Éducation Civique (MINJEC)">Ministry of Youth Affairs and Civic Education (MINJEC)</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/UN-2030-Agenda-Sustainable-Development-Goals.jpeg" alt="United Nations Sustainable Development Goals logo" loading="lazy" decoding="async"></div>
+                  <figcaption data-en="UN 2030 Agenda — Sustainable Development Goals" data-fr="Agenda 2030 des Nations Unies — Objectifs de développement durable">UN 2030 Agenda — Sustainable Development Goals</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/Mboa-Hub-Logo.jpeg" alt="Mboa Hub logo" loading="lazy" decoding="async"></div>
+                  <figcaption>Mboa Hub</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/IRIC-Logo.jpeg" alt="IRIC logo" loading="lazy" decoding="async"></div>
+                  <figcaption data-en="International Relations Institute of Cameroon (IRIC)" data-fr="Institut des Relations Internationales du Cameroun (IRIC)">International Relations Institute of Cameroon (IRIC)</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/CONEP-Cameroon-Logo.jpeg" alt="CONEP Cameroon logo" loading="lazy" decoding="async"></div>
+                  <figcaption data-en="National Council for Popular Education (CONEP)" data-fr="Conseil National de l’Éducation Populaire (CONEP)">National Council for Popular Education (CONEP)</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/MINREX-Cameroon-Logo.jpeg" alt="MINREX Cameroon logo" loading="lazy" decoding="async"></div>
+                  <figcaption data-en="Ministry of External Relations (MINREX)" data-fr="Ministère des Relations Extérieures (MINREX)">Ministry of External Relations (MINREX)</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/PLAVOLCAM-Partners-Wheel.jpeg" alt="PLAVOLCAM partners wheel" loading="lazy" decoding="async"></div>
+                  <figcaption data-en="Platform of Actors Working in Volunteering in Cameroon (PLAVOLCAM)" data-fr="Plateforme des acteurs œuvrant dans le volontariat au Cameroun (PLAVOLCAM)">Platform of Actors Working in Volunteering in Cameroon (PLAVOLCAM)</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/CIVASS-Volpreneurs-Challenge-VPC-Logo.jpeg" alt="CIVASS Volpreneurs Challenge logo" loading="lazy" decoding="async"></div>
+                  <figcaption data-en="CIVASS Volpreneurs Challenge (VPC)" data-fr="CIVASS Volpreneurs Challenge (VPC)">CIVASS Volpreneurs Challenge (VPC)</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/EMIH-Emelda-Incubation-Hub-Logo.jpeg" alt="Emelda Incubation Hub logo" loading="lazy" decoding="async"></div>
+                  <figcaption data-en="Emelda Incubation Hub (EMIH)" data-fr="Emelda Incubation Hub (EMIH)">Emelda Incubation Hub (EMIH)</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/Duke-of-Edinburgh-International-Award-Cameroon-Logo.jpeg" alt="Duke of Edinburgh International Award Cameroon logo" loading="lazy" decoding="async"></div>
+                  <figcaption data-en="The Duke of Edinburgh’s International Award — Cameroon" data-fr="The Duke of Edinburgh’s International Award — Cameroun">The Duke of Edinburgh’s International Award — Cameroon</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/Break-Free-From-Plastic-Logo.jpeg" alt="Break Free From Plastic logo" loading="lazy" decoding="async"></div>
+                  <figcaption>Break Free From Plastic</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/Universite-Protestante-dAfrique-Centrale-Seal.jpeg" alt="Protestant University of Central Africa seal" loading="lazy" decoding="async"></div>
+                  <figcaption data-en="Protestant University of Central Africa (UPAC)" data-fr="Université Protestante d’Afrique Centrale (UPAC)">Protestant University of Central Africa (UPAC)</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/Greenpeace-Africa-Logo.jpeg" alt="Greenpeace Africa logo" loading="lazy" decoding="async"></div>
+                  <figcaption>Greenpeace Africa</figcaption>
+                </figure>
+                <figure class="partner-logo-card">
+                  <div class="logo-box"><img src="assets/U-Report-by-UNICEF-Logo.jpeg" alt="U-Report by UNICEF logo" loading="lazy" decoding="async"></div>
+                  <figcaption>U-Report by UNICEF</figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+          <div class="partner-carousel-controls" aria-label="Partner carousel controls" data-en="Partner carousel controls" data-fr="Commandes du carrousel des partenaires">
+            <button class="partner-carousel-btn" id="partnerPrev" type="button" aria-label="Previous partners" data-en="‹" data-fr="‹">‹</button>
+            <button class="partner-carousel-btn" id="partnerNext" type="button" aria-label="Next partners" data-en="›" data-fr="›">›</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -923,6 +1037,91 @@ footer a:hover{color:#fff;text-decoration:underline}
         }
       }, 3000);
     }
+  }
+
+  // ---- partner logo carousel ------------------------------------------
+  var partnerCarousel = document.getElementById("partnerLogoCarousel");
+  var partnerTrack = document.getElementById("partnerLogoTrack");
+  var partnerPrev = document.getElementById("partnerPrev");
+  var partnerNext = document.getElementById("partnerNext");
+
+  if (partnerCarousel && partnerTrack && partnerPrev && partnerNext) {
+    // Randomise the starting order on each page load so a different mix
+    // of institutions, networks and recognitions gets visibility.
+    var partnerCards = Array.prototype.slice.call(partnerTrack.children);
+    for (var s = partnerCards.length - 1; s > 0; s--) {
+      var r = Math.floor(Math.random() * (s + 1));
+      var temp = partnerCards[s];
+      partnerCards[s] = partnerCards[r];
+      partnerCards[r] = temp;
+    }
+    partnerCards.forEach(function (card) { partnerTrack.appendChild(card); });
+
+    var partnerIndex = 0;
+    var partnerTimer = null;
+
+    function partnerVisibleCount() {
+      return window.innerWidth <= 680 ? 1 : 2;
+    }
+
+    function partnerMaxIndex() {
+      return Math.max(0, partnerTrack.children.length - partnerVisibleCount());
+    }
+
+    function partnerStepWidth() {
+      var first = partnerTrack.children[0];
+      if (!first) return 0;
+      var styles = window.getComputedStyle(partnerTrack);
+      var gap = parseFloat(styles.columnGap || styles.gap || "0") || 0;
+      return first.getBoundingClientRect().width + gap;
+    }
+
+    function partnerRender(animate) {
+      var max = partnerMaxIndex();
+      if (partnerIndex > max) partnerIndex = max;
+      if (partnerIndex < 0) partnerIndex = 0;
+      partnerTrack.style.transition = animate === false ? "none" : "transform .55s cubic-bezier(.22,.7,.3,1)";
+      partnerTrack.style.transform = "translate3d(" + (-partnerIndex * partnerStepWidth()) + "px,0,0)";
+      if (animate === false) {
+        window.requestAnimationFrame(function () {
+          partnerTrack.style.transition = "transform .55s cubic-bezier(.22,.7,.3,1)";
+        });
+      }
+    }
+
+    function partnerGo(delta) {
+      var max = partnerMaxIndex();
+      if (!max) return;
+      partnerIndex += delta;
+      if (partnerIndex > max) partnerIndex = 0;
+      if (partnerIndex < 0) partnerIndex = max;
+      partnerRender(true);
+    }
+
+    function partnerStop() {
+      if (partnerTimer) {
+        window.clearInterval(partnerTimer);
+        partnerTimer = null;
+      }
+    }
+
+    function partnerStart() {
+      partnerStop();
+      if (!reduceMotion) {
+        partnerTimer = window.setInterval(function () { partnerGo(1); }, 3600);
+      }
+    }
+
+    partnerPrev.addEventListener("click", function () { partnerGo(-1); partnerStart(); });
+    partnerNext.addEventListener("click", function () { partnerGo(1); partnerStart(); });
+    partnerCarousel.addEventListener("mouseenter", partnerStop);
+    partnerCarousel.addEventListener("mouseleave", partnerStart);
+    partnerCarousel.addEventListener("focusin", partnerStop);
+    partnerCarousel.addEventListener("focusout", partnerStart);
+    window.addEventListener("resize", function () { partnerRender(false); });
+
+    partnerRender(false);
+    partnerStart();
   }
 
   // ---- current year ----------------------------------------------------
