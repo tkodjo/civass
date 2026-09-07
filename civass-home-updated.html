@@ -1111,7 +1111,10 @@ footer a:hover{color:#fff;text-decoration:underline}
     }
     partnerCards.forEach(function (card) { partnerTrack.appendChild(card); });
 
-    var partnerIndex = 0;
+    // Start on a different partner at random on every page load.
+    var partnerIndex = partnerTrack.children.length
+      ? Math.floor(Math.random() * partnerTrack.children.length)
+      : 0;
     var partnerTimer = null;
 
     function partnerVisibleCount() {
@@ -1151,26 +1154,42 @@ footer a:hover{color:#fff;text-decoration:underline}
       partnerRender(true);
     }
 
+    function partnerGoRandom() {
+      var max = partnerMaxIndex();
+      if (!max) return;
+
+      // Pick a different logo from the one currently visible.
+      var next = partnerIndex;
+      while (next === partnerIndex) {
+        next = Math.floor(Math.random() * (max + 1));
+      }
+      partnerIndex = next;
+      partnerRender(true);
+    }
+
     function partnerStop() {
       if (partnerTimer) {
-        window.clearInterval(partnerTimer);
+        window.clearTimeout(partnerTimer);
         partnerTimer = null;
       }
     }
 
     function partnerStart() {
       partnerStop();
-      if (!reduceMotion) {
-        partnerTimer = window.setInterval(function () { partnerGo(1); }, 2800);
+      if (!reduceMotion && !document.hidden) {
+        // Random dwell time keeps the carousel from feeling mechanically repetitive.
+        var delay = 2200 + Math.floor(Math.random() * 1600);
+        partnerTimer = window.setTimeout(function () {
+          partnerGoRandom();
+          partnerStart();
+        }, delay);
       }
     }
 
     partnerPrev.addEventListener("click", function () { partnerGo(-1); partnerStart(); });
     partnerNext.addEventListener("click", function () { partnerGo(1); partnerStart(); });
-    // Keep auto-advance running even when the pointer sits over the carousel.
-    // This avoids the carousel appearing "stuck" during normal desktop viewing.
-    partnerCarousel.addEventListener("focusin", partnerStop);
-    partnerCarousel.addEventListener("focusout", partnerStart);
+
+    // Autoplay deliberately does not pause on hover or keyboard focus.
     window.addEventListener("resize", function () {
       partnerIndex = Math.min(partnerIndex, partnerMaxIndex());
       partnerRender(false);
@@ -1180,7 +1199,8 @@ footer a:hover{color:#fff;text-decoration:underline}
     });
 
     partnerRender(false);
-    partnerStart();
+    // Begin automatic random movement shortly after the carousel is painted.
+    window.setTimeout(partnerStart, 650);
   }
 
   // ---- current year ----------------------------------------------------
