@@ -1116,6 +1116,7 @@ footer a:hover{color:#fff;text-decoration:underline}
       ? Math.floor(Math.random() * partnerTrack.children.length)
       : 0;
     var partnerTimer = null;
+    var partnerPaused = false;
 
     function partnerVisibleCount() {
       return 1;
@@ -1176,20 +1177,37 @@ footer a:hover{color:#fff;text-decoration:underline}
 
     function partnerStart() {
       partnerStop();
-      if (!reduceMotion && !document.hidden) {
-        // Random dwell time keeps the carousel from feeling mechanically repetitive.
-        var delay = 2200 + Math.floor(Math.random() * 1600);
+      if (!reduceMotion && !document.hidden && !partnerPaused) {
         partnerTimer = window.setTimeout(function () {
           partnerGoRandom();
           partnerStart();
-        }, delay);
+        }, 5000);
       }
     }
 
     partnerPrev.addEventListener("click", function () { partnerGo(-1); partnerStart(); });
     partnerNext.addEventListener("click", function () { partnerGo(1); partnerStart(); });
 
-    // Autoplay deliberately does not pause on hover or keyboard focus.
+    // Pause autoplay while the user is inspecting or navigating the carousel.
+    partnerCarousel.addEventListener("mouseenter", function () {
+      partnerPaused = true;
+      partnerStop();
+    });
+    partnerCarousel.addEventListener("mouseleave", function () {
+      partnerPaused = false;
+      partnerStart();
+    });
+    partnerCarousel.addEventListener("focusin", function () {
+      partnerPaused = true;
+      partnerStop();
+    });
+    partnerCarousel.addEventListener("focusout", function (event) {
+      if (!partnerCarousel.contains(event.relatedTarget)) {
+        partnerPaused = false;
+        partnerStart();
+      }
+    });
+
     window.addEventListener("resize", function () {
       partnerIndex = Math.min(partnerIndex, partnerMaxIndex());
       partnerRender(false);
@@ -1199,8 +1217,8 @@ footer a:hover{color:#fff;text-decoration:underline}
     });
 
     partnerRender(false);
-    // Begin automatic random movement shortly after the carousel is painted.
-    window.setTimeout(partnerStart, 650);
+    // First automatic transition occurs after the same five-second dwell time.
+    partnerStart();
   }
 
   // ---- current year ----------------------------------------------------
