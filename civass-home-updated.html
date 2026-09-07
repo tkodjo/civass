@@ -241,7 +241,7 @@ section{padding:88px 0}
 .callout{background:var(--mist);border-left:5px solid var(--sky);padding:30px 30px 34px;border-radius:0 3px 3px 0}
 .callout h3{font-size:1.2rem;color:var(--navy);margin-bottom:12px}
 .callout p{font-size:15.5px;color:#41525f}
-/* partner logo carousel — deliberately compact, matching the footprint of the old institution cloud */
+/* partner logo carousel — compact, one logo at a time, with slide-in transitions */
 .partner-carousel{margin-top:14px;position:relative;width:100%;max-width:380px}
 .partner-carousel-shell{position:relative}
 .partner-carousel-viewport{
@@ -249,21 +249,16 @@ section{padding:88px 0}
   width:100%;
   max-width:380px;
   padding:3px 1px 6px;
-  scroll-behavior:smooth;
-  scrollbar-width:none;
-  scroll-snap-type:x mandatory;
 }
-.partner-carousel-viewport::-webkit-scrollbar{display:none}
 .partner-logo-track{
-  display:flex;
-  gap:10px;
+  position:relative;
   width:100%;
-  align-items:stretch;
-  transform:none!important;
+  height:128px;
 }
 .partner-logo-card{
-  flex:0 0 100%;
-  min-width:0;
+  position:absolute;
+  inset:0;
+  width:100%;
   margin:0;
   background:#fff;
   border:1px solid var(--line);
@@ -271,7 +266,45 @@ section{padding:88px 0}
   border-radius:4px;
   overflow:hidden;
   box-shadow:0 8px 20px -20px rgba(11,46,85,.5);
-  scroll-snap-align:start;
+  opacity:0;
+  transform:translateX(110%);
+  pointer-events:none;
+  visibility:hidden;
+  transition:transform .58s cubic-bezier(.22,.72,.22,1), opacity .46s ease;
+  will-change:transform,opacity;
+}
+.partner-logo-card.is-active{
+  opacity:1;
+  transform:translateX(0);
+  pointer-events:auto;
+  visibility:visible;
+  z-index:2;
+}
+.partner-logo-card.from-right{
+  opacity:1;
+  transform:translateX(110%);
+  visibility:visible;
+  z-index:3;
+  transition:none;
+}
+.partner-logo-card.from-left{
+  opacity:1;
+  transform:translateX(-110%);
+  visibility:visible;
+  z-index:3;
+  transition:none;
+}
+.partner-logo-card.out-left{
+  opacity:0;
+  transform:translateX(-110%);
+  visibility:visible;
+  z-index:1;
+}
+.partner-logo-card.out-right{
+  opacity:0;
+  transform:translateX(110%);
+  visibility:visible;
+  z-index:1;
 }
 .partner-logo-card .logo-box{
   height:78px;
@@ -282,7 +315,7 @@ section{padding:88px 0}
   background:#fff;
 }
 .partner-logo-card img{width:100%;height:100%;object-fit:contain;display:block}
- .partner-logo-link{display:flex;flex-direction:column;flex:1;min-width:0;color:inherit;text-decoration:none}
+.partner-logo-link{display:flex;flex-direction:column;flex:1;min-width:0;color:inherit;text-decoration:none}
 .partner-logo-link:hover figcaption,.partner-logo-link:focus-visible figcaption{color:var(--blue)}
 .partner-logo-link[href="#"]{cursor:default}
 .partner-logo-card figcaption{
@@ -302,14 +335,14 @@ section{padding:88px 0}
 }
 .partner-carousel-btn:hover,.partner-carousel-btn:focus-visible{background:var(--navy);border-color:var(--navy);color:#fff}
 .partner-carousel-note{margin-top:6px;font-size:12px;color:var(--grey)}
-@media (max-width:1040px){
-  .partner-logo-card{flex-basis:100%}
-}
 @media (max-width:680px){
-  .partner-logo-card{flex-basis:100%}
   .partner-carousel,.partner-carousel-viewport{max-width:100%}
+  .partner-logo-track{height:124px}
   .partner-logo-card .logo-box{height:74px}
   .partner-logo-card figcaption{min-height:42px;font-size:11px}
+}
+@media (prefers-reduced-motion:reduce){
+  .partner-logo-card{transition:none!important}
 }
 
 /* involve */
@@ -1157,7 +1190,7 @@ footer a:hover{color:#fff;text-decoration:underline}
   var partnerNext = document.getElementById("partnerNext");
 
   if (partnerCarousel && partnerViewport && partnerTrack && partnerPrev && partnerNext) {
-    // Randomise the card order once per page load.
+    // Randomise the logo order once per page load.
     var partnerCards = Array.prototype.slice.call(partnerTrack.children);
     for (var s = partnerCards.length - 1; s > 0; s--) {
       var r = Math.floor(Math.random() * (s + 1));
@@ -1166,62 +1199,70 @@ footer a:hover{color:#fff;text-decoration:underline}
       partnerCards[r] = temp;
     }
     partnerCards.forEach(function (card) { partnerTrack.appendChild(card); });
+    partnerCards = Array.prototype.slice.call(partnerTrack.children);
 
-    // Start on a different partner at random on every page load.
-    var partnerIndex = partnerTrack.children.length
-      ? Math.floor(Math.random() * partnerTrack.children.length)
-      : 0;
+    var partnerIndex = partnerCards.length ? Math.floor(Math.random() * partnerCards.length) : 0;
     var partnerTimer = null;
     var partnerPaused = false;
+    var partnerAnimating = false;
+    var partnerDuration = reduceMotion ? 0 : 580;
 
-    function partnerVisibleCount() {
-      return 1;
+    function partnerShowInitial() {
+      partnerCards.forEach(function (card) {
+        card.classList.remove("is-active", "from-right", "from-left", "out-left", "out-right");
+      });
+      if (partnerCards[partnerIndex]) partnerCards[partnerIndex].classList.add("is-active");
     }
 
-    function partnerMaxIndex() {
-      return Math.max(0, partnerTrack.children.length - partnerVisibleCount());
-    }
+    function partnerTransitionTo(nextIndex, direction) {
+      if (!partnerCards.length || partnerAnimating || nextIndex === partnerIndex) return;
 
-    function partnerStepWidth() {
-      var first = partnerTrack.children[0];
-      if (!first) return 0;
-      var styles = window.getComputedStyle(partnerTrack);
-      var gap = parseFloat(styles.columnGap || styles.gap || "0") || 0;
-      return first.getBoundingClientRect().width + gap;
-    }
+      var current = partnerCards[partnerIndex];
+      var next = partnerCards[nextIndex];
+      var fromClass = direction < 0 ? "from-left" : "from-right";
+      var outClass = direction < 0 ? "out-right" : "out-left";
 
-    function partnerRender(smooth) {
-      var max = partnerMaxIndex();
-      if (partnerIndex > max) partnerIndex = max;
-      if (partnerIndex < 0) partnerIndex = 0;
-      var left = partnerIndex * partnerStepWidth();
-      if (typeof partnerViewport.scrollTo === "function") {
-        partnerViewport.scrollTo({ left: left, behavior: smooth && !reduceMotion ? "smooth" : "auto" });
-      } else {
-        partnerViewport.scrollLeft = left;
+      if (reduceMotion) {
+        current.classList.remove("is-active");
+        next.classList.add("is-active");
+        partnerIndex = nextIndex;
+        return;
       }
+
+      partnerAnimating = true;
+      next.classList.remove("is-active", "from-right", "from-left", "out-left", "out-right");
+      next.classList.add(fromClass);
+
+      // Force the browser to paint the incoming card just outside the viewport
+      // before starting the transition into place.
+      void next.offsetWidth;
+
+      current.classList.add(outClass);
+      current.classList.remove("is-active");
+      next.classList.remove(fromClass);
+      next.classList.add("is-active");
+      partnerIndex = nextIndex;
+
+      window.setTimeout(function () {
+        current.classList.remove(outClass);
+        partnerAnimating = false;
+      }, partnerDuration + 40);
     }
 
     function partnerGo(delta) {
-      var max = partnerMaxIndex();
-      if (!max) return;
-      partnerIndex += delta;
-      if (partnerIndex > max) partnerIndex = 0;
-      if (partnerIndex < 0) partnerIndex = max;
-      partnerRender(true);
+      if (!partnerCards.length) return;
+      var nextIndex = (partnerIndex + delta + partnerCards.length) % partnerCards.length;
+      partnerTransitionTo(nextIndex, delta < 0 ? -1 : 1);
     }
 
     function partnerGoRandom() {
-      var max = partnerMaxIndex();
-      if (!max) return;
-
-      // Pick a different logo from the one currently visible.
-      var next = partnerIndex;
-      while (next === partnerIndex) {
-        next = Math.floor(Math.random() * (max + 1));
+      if (partnerCards.length < 2) return;
+      var nextIndex = partnerIndex;
+      while (nextIndex === partnerIndex) {
+        nextIndex = Math.floor(Math.random() * partnerCards.length);
       }
-      partnerIndex = next;
-      partnerRender(true);
+      // Automatic changes always slide in from the right.
+      partnerTransitionTo(nextIndex, 1);
     }
 
     function partnerStop() {
@@ -1233,7 +1274,7 @@ footer a:hover{color:#fff;text-decoration:underline}
 
     function partnerStart() {
       partnerStop();
-      if (!document.hidden && !partnerPaused) {
+      if (!document.hidden && !partnerPaused && partnerCards.length > 1) {
         partnerTimer = window.setInterval(function () {
           partnerGoRandom();
         }, 5000);
@@ -1263,18 +1304,12 @@ footer a:hover{color:#fff;text-decoration:underline}
       }
     });
 
-    window.addEventListener("resize", function () {
-      partnerIndex = Math.min(partnerIndex, partnerMaxIndex());
-      partnerRender(false);
-    });
     document.addEventListener("visibilitychange", function () {
       if (document.hidden) partnerStop(); else partnerStart();
     });
 
-    window.requestAnimationFrame(function () {
-      partnerRender(false);
-      partnerStart();
-    });
+    partnerShowInitial();
+    partnerStart();
   }
 
   // ---- current year ----------------------------------------------------
