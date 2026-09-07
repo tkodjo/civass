@@ -726,7 +726,7 @@ footer a:hover{color:#fff;text-decoration:underline}
 
         <div class="partner-carousel" id="partnerLogoCarousel">
           <div class="partner-carousel-shell">
-            <div class="partner-carousel-viewport" aria-label="Partner institutions and networks" data-en="Partner institutions and networks" data-fr="Institutions et réseaux partenaires">
+            <div class="partner-carousel-viewport" aria-label="Partner institutions and networks" data-en-label="Partner institutions and networks" data-fr-label="Institutions et réseaux partenaires">
               <div class="partner-logo-track" id="partnerLogoTrack">
                 <figure class="partner-logo-card">
                   <div class="logo-box"><img src="assets/MINHDU-Cameroon-Logo.jpeg" alt="MINHDU Cameroon logo" loading="lazy" decoding="async"></div>
@@ -811,7 +811,7 @@ footer a:hover{color:#fff;text-decoration:underline}
               </div>
             </div>
           </div>
-          <div class="partner-carousel-controls" aria-label="Partner carousel controls" data-en="Partner carousel controls" data-fr="Commandes du carrousel des partenaires">
+          <div class="partner-carousel-controls" aria-label="Partner carousel controls" data-en-label="Partner carousel controls" data-fr-label="Commandes du carrousel des partenaires">
             <button class="partner-carousel-btn" id="partnerPrev" type="button" aria-label="Previous partners" data-en="‹" data-fr="‹">‹</button>
             <button class="partner-carousel-btn" id="partnerNext" type="button" aria-label="Next partners" data-en="›" data-fr="›">›</button>
           </div>
@@ -919,6 +919,10 @@ footer a:hover{color:#fff;text-decoration:underline}
     nodes.forEach(function (n) {
       var v = n.getAttribute("data-" + lang);
       if (v !== null) n.innerHTML = v;
+    });
+    document.querySelectorAll("[data-en-label]").forEach(function (n) {
+      var label = n.getAttribute("data-" + lang + "-label");
+      if (label !== null) n.setAttribute("aria-label", label);
     });
     document.documentElement.lang = lang;
     buttons.forEach(function (b) {
